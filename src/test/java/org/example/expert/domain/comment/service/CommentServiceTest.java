@@ -17,7 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,20 +54,20 @@ class CommentServiceTest {
     }
 
     @Test
-    void saveComment실패_유저가notmanager(){
+    void saveComment실패_유저가notmanager() {
         long todoId = 1;
         AuthUser authUser = TEST_AUTHUSER;
         User user = User.fromAuthUser(authUser);
         Todo todo = TEST_TODO1;
         given(todoRepository.findById(anyLong())).willReturn(Optional.of(todo));
-        Manager manager = new Manager(user,todo);
-        given(managerRepository.findByUserIdAndTodoId(user.getId(),todoId)).willReturn(Optional.empty());
+        Manager manager = new Manager(user, todo);
+        given(managerRepository.findByUserIdAndTodoId(user.getId(), todoId)).willReturn(Optional.empty());
 
-        NullPointerException exception = assertThrows(NullPointerException.class,()->{
-            commentService.saveComment(authUser,todoId,request);
+        NullPointerException exception = assertThrows(NullPointerException.class, () -> {
+            commentService.saveComment(authUser, todoId, request);
         });
 
-        assertEquals("user is not manager",exception.getMessage());
+        assertEquals("user is not manager", exception.getMessage());
     }
 
     @Test
@@ -80,8 +79,8 @@ class CommentServiceTest {
         Todo todo = TEST_TODO1;
         given(todoRepository.findById(anyLong())).willReturn(Optional.of(todo));
 
-        Manager manager = new Manager(user,todo);
-        given(managerRepository.findByUserIdAndTodoId(user.getId(),todoId)).willReturn(Optional.of(manager));
+        Manager manager = new Manager(user, todo);
+        given(managerRepository.findByUserIdAndTodoId(user.getId(), todoId)).willReturn(Optional.of(manager));
 
         Comment comment = TEST_COMMENT1;
         given(commentRepository.save(any())).willReturn(comment);
