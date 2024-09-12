@@ -2,6 +2,8 @@ package org.example.expert.domain;
 
 import org.example.expert.domain.auth.dto.request.SigninRequest;
 import org.example.expert.domain.auth.dto.request.SignupRequest;
+import org.example.expert.domain.comment.dto.request.CommentSaveRequest;
+import org.example.expert.domain.comment.entity.Comment;
 import org.example.expert.domain.common.dto.AuthUser;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequest;
 import org.example.expert.domain.todo.entity.Todo;
@@ -25,6 +27,7 @@ public class CommonNeeds {
     public final static SigninRequest signinRequest = new SigninRequest(
             "a@a.com","1234");
 
+    //TodoService
     public final static AuthUser TEST_AUTHUSER = new AuthUser(TEST_ID1,TEST_EMAIL1,TEST_USERROLE1);
     public final static String TEST_TITLE1="Title";
     public final static String TEST_CONTENTS1="Contents";
@@ -32,4 +35,7 @@ public class CommonNeeds {
     public final static Todo TEST_TODO1 = new Todo(TEST_TITLE1,TEST_CONTENTS1,TEST_WEATHER1,TEST_USER1);
 
     public final static TodoSaveRequest todoSaveRequest = new TodoSaveRequest(TEST_TITLE1,TEST_CONTENTS1);
+    //CommentService
+    public final static CommentSaveRequest request = new CommentSaveRequest(TEST_CONTENTS1);
+    public final static Comment TEST_COMMENT1 = new Comment(TEST_CONTENTS1,TEST_USER1,TEST_TODO1);
 }
