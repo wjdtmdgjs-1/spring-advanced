@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.example.expert.domain.CommonNeeds.TEST_AUTHUSER;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -60,6 +61,7 @@ class CommentControllerTest {
     @Test
     void 댓글저장() throws Exception {
         // given
+
         long todoId = 1L;
         CommentSaveRequest request = new CommentSaveRequest("test");
         UserResponse user = new UserResponse(1L, "email@email.com");
@@ -68,7 +70,7 @@ class CommentControllerTest {
 
         // when
         ResultActions resultActions = mockMvc.perform
-                (post("/todos/{todoId}/comments", todoId, request)
+                (post("/todos/{todoId}/comments",todoId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)));
 
