@@ -30,86 +30,93 @@ public class UserServiceTest {
     PasswordEncoder passwordEncoder;
     @InjectMocks
     UserService userService;
+
     @Test
-    void changePassword실패_패스워드길이(){
-        UserChangePasswordRequest userChangePasswordRequest = new UserChangePasswordRequest("1234","123");
-        long userId=1;
+    void changePassword실패_패스워드길이() {
+        UserChangePasswordRequest userChangePasswordRequest = new UserChangePasswordRequest("1234", "123");
+        long userId = 1;
         InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> {
-            userService.changePassword(1,userChangePasswordRequest);
+            userService.changePassword(1, userChangePasswordRequest);
         });
-        assertEquals("새 비밀번호는 8자 이상이어야 하고, 숫자와 대문자를 포함해야 합니다.",exception.getMessage());
+        assertEquals("새 비밀번호는 8자 이상이어야 하고, 숫자와 대문자를 포함해야 합니다.", exception.getMessage());
     }
+
     @Test
-    void changePassword실패_패스워드숫자미포함(){
-        UserChangePasswordRequest userChangePasswordRequest = new UserChangePasswordRequest("1234","Abcdefghijk");
-        long userId=1;
+    void changePassword실패_패스워드숫자미포함() {
+        UserChangePasswordRequest userChangePasswordRequest = new UserChangePasswordRequest("1234", "Abcdefghijk");
+        long userId = 1;
         InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> {
-            userService.changePassword(1,userChangePasswordRequest);
+            userService.changePassword(1, userChangePasswordRequest);
         });
-        assertEquals("새 비밀번호는 8자 이상이어야 하고, 숫자와 대문자를 포함해야 합니다.",exception.getMessage());
+        assertEquals("새 비밀번호는 8자 이상이어야 하고, 숫자와 대문자를 포함해야 합니다.", exception.getMessage());
     }
+
     @Test
-    void changePassword실패_패스워드대문자미포함(){
-        UserChangePasswordRequest userChangePasswordRequest = new UserChangePasswordRequest("1234","bcdefghijk12");
-        long userId=1;
+    void changePassword실패_패스워드대문자미포함() {
+        UserChangePasswordRequest userChangePasswordRequest = new UserChangePasswordRequest("1234", "bcdefghijk12");
+        long userId = 1;
         InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> {
-            userService.changePassword(1,userChangePasswordRequest);
+            userService.changePassword(1, userChangePasswordRequest);
         });
-        assertEquals("새 비밀번호는 8자 이상이어야 하고, 숫자와 대문자를 포함해야 합니다.",exception.getMessage());
+        assertEquals("새 비밀번호는 8자 이상이어야 하고, 숫자와 대문자를 포함해야 합니다.", exception.getMessage());
     }
+
     @Test
-    void changePassword실패_유저찾기실패(){
-        UserChangePasswordRequest userChangePasswordRequest = new UserChangePasswordRequest("1234","Abcdefghijk1");
-        long userId=1;
+    void changePassword실패_유저찾기실패() {
+        UserChangePasswordRequest userChangePasswordRequest = new UserChangePasswordRequest("1234", "Abcdefghijk1");
+        long userId = 1;
         given(userRepository.findById(userId)).willReturn(Optional.empty());
         InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> {
-            userService.changePassword(1,userChangePasswordRequest);
+            userService.changePassword(1, userChangePasswordRequest);
         });
-        assertEquals("User not found",exception.getMessage());
+        assertEquals("User not found", exception.getMessage());
     }
+
     @Test
-    void changePassword실패_동일비밀번호입력(){
-        UserChangePasswordRequest userChangePasswordRequest = new UserChangePasswordRequest("Abcdefghijk1","Abcdefghijk1");
-        Long userId=1L;
+    void changePassword실패_동일비밀번호입력() {
+        UserChangePasswordRequest userChangePasswordRequest = new UserChangePasswordRequest("Abcdefghijk1", "Abcdefghijk1");
+        Long userId = 1L;
         User user = TEST_USER1;
-        ReflectionTestUtils.setField(user,"id",1L);
+        ReflectionTestUtils.setField(user, "id", 1L);
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(passwordEncoder.matches(userChangePasswordRequest.getNewPassword(),user.getPassword())).willReturn(true);
+        given(passwordEncoder.matches(userChangePasswordRequest.getNewPassword(), user.getPassword())).willReturn(true);
         InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> {
-            userService.changePassword(1,userChangePasswordRequest);
+            userService.changePassword(1, userChangePasswordRequest);
         });
-        assertEquals("새 비밀번호는 기존 비밀번호와 같을 수 없습니다.",exception.getMessage());
+        assertEquals("새 비밀번호는 기존 비밀번호와 같을 수 없습니다.", exception.getMessage());
     }
+
     @Test
-    void changePassword실패_잘못된비밀번호입력(){
-        UserChangePasswordRequest userChangePasswordRequest = new UserChangePasswordRequest("Abcdefghij1","Abcdefghijk1");
-        Long userId=1L;
+    void changePassword실패_잘못된비밀번호입력() {
+        UserChangePasswordRequest userChangePasswordRequest = new UserChangePasswordRequest("Abcdefghij1", "Abcdefghijk1");
+        Long userId = 1L;
         User user = TEST_USER1;
-        ReflectionTestUtils.setField(user,"id",1L);
+        ReflectionTestUtils.setField(user, "id", 1L);
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(passwordEncoder.matches(userChangePasswordRequest.getNewPassword(),user.getPassword())).willReturn(false);
-        given(passwordEncoder.matches(userChangePasswordRequest.getOldPassword(),user.getPassword())).willReturn(false);
+        given(passwordEncoder.matches(userChangePasswordRequest.getNewPassword(), user.getPassword())).willReturn(false);
+        given(passwordEncoder.matches(userChangePasswordRequest.getOldPassword(), user.getPassword())).willReturn(false);
         InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> {
-            userService.changePassword(1,userChangePasswordRequest);
+            userService.changePassword(1, userChangePasswordRequest);
         });
-        assertEquals("잘못된 비밀번호입니다.",exception.getMessage());
+        assertEquals("잘못된 비밀번호입니다.", exception.getMessage());
     }
+
     @Test
-    void changePassword_정상작동테스트(){
-        UserChangePasswordRequest userChangePasswordRequest = new UserChangePasswordRequest("Abcdefghijk1","Abcdefghi123");
-        Long userId=1L;
+    void changePassword_정상작동테스트() {
+        UserChangePasswordRequest userChangePasswordRequest = new UserChangePasswordRequest("Abcdefghijk1", "Abcdefghi123");
+        Long userId = 1L;
         User user = TEST_USER1;
-        ReflectionTestUtils.setField(user,"id",1L);
+        ReflectionTestUtils.setField(user, "id", 1L);
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(passwordEncoder.matches(userChangePasswordRequest.getNewPassword(),user.getPassword())).willReturn(false);
-        given(passwordEncoder.matches(userChangePasswordRequest.getOldPassword(),user.getPassword())).willReturn(true);
+        given(passwordEncoder.matches(userChangePasswordRequest.getNewPassword(), user.getPassword())).willReturn(false);
+        given(passwordEncoder.matches(userChangePasswordRequest.getOldPassword(), user.getPassword())).willReturn(true);
         String encodedPassword = "1234";
         given(passwordEncoder.encode(userChangePasswordRequest.getNewPassword())).willReturn(encodedPassword);
 
         //when
-        userService.changePassword(userId,userChangePasswordRequest);
+        userService.changePassword(userId, userChangePasswordRequest);
         //then
-        verify(passwordEncoder,times(1)).encode(userChangePasswordRequest.getNewPassword());
+        verify(passwordEncoder, times(1)).encode(userChangePasswordRequest.getNewPassword());
     }
 
 }

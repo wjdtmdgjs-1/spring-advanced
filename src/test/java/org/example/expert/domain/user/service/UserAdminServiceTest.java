@@ -18,7 +18,6 @@ import static org.example.expert.domain.CommonNeeds.TEST_USER1;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class UserAdminServiceTest {
@@ -28,29 +27,29 @@ public class UserAdminServiceTest {
     UserAdminService userAdminService;
 
     @Test
-    void changeUserRole실패_유저찾기실패(){
-        long userId =1;
+    void changeUserRole실패_유저찾기실패() {
+        long userId = 1;
         given(userRepository.findById(userId)).willReturn(Optional.empty());
 
-        InvalidRequestException exception = assertThrows(InvalidRequestException.class,()->{
-            userAdminService.changeUserRole(userId,new UserRoleChangeRequest());
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> {
+            userAdminService.changeUserRole(userId, new UserRoleChangeRequest());
         });
 
-        assertEquals("User not found",exception.getMessage());
+        assertEquals("User not found", exception.getMessage());
     }
 
     @Test
-    void changeUserRole_작동성공테스트(){
+    void changeUserRole_작동성공테스트() {
         User user = TEST_USER1;
         UserRoleChangeRequest userRoleChangeRequest = new UserRoleChangeRequest("ADMIN");
-        ReflectionTestUtils.setField(user,"id",1L);
-        long userId =1;
+        ReflectionTestUtils.setField(user, "id", 1L);
+        long userId = 1;
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
 
         //when
-        userAdminService.changeUserRole(userId,userRoleChangeRequest);
+        userAdminService.changeUserRole(userId, userRoleChangeRequest);
         //then
 
-        assertEquals(UserRole.of(userRoleChangeRequest.getRole()),user.getUserRole());
+        assertEquals(UserRole.of(userRoleChangeRequest.getRole()), user.getUserRole());
     }
 }

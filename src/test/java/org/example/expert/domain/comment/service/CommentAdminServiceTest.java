@@ -1,6 +1,5 @@
 package org.example.expert.domain.comment.service;
 
-import org.example.expert.domain.comment.dto.response.CommentResponse;
 import org.example.expert.domain.comment.repository.CommentRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,14 +18,14 @@ public class CommentAdminServiceTest {
     CommentAdminService commentAdminService;
 
     @Test
-    void deleteComment_작동성공테스트(){
+    void deleteComment_작동성공테스트() {
         long commentId = 1;
         doNothing().when(commentRepository).deleteById(commentId);
 
         //when
         commentAdminService.deleteComment(commentId);
         //then
-        verify(commentRepository,times(1)).deleteById(commentId);
+        verify(commentRepository, times(1)).deleteById(commentId);
     }
 
 }
