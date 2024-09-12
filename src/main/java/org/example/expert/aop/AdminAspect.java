@@ -58,7 +58,6 @@ public class AdminAspect {
 
         // 요청 URL 가져오기
         String requestUrl = request.getRequestURI();
-       // String requestId = request.getHeader("userId");
 
         String authorizationHeader = request.getHeader("Authorization");
         String userId = null;
