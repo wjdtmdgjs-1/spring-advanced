@@ -6,7 +6,9 @@ import org.example.expert.domain.comment.dto.request.CommentSaveRequest;
 import org.example.expert.domain.comment.entity.Comment;
 import org.example.expert.domain.common.dto.AuthUser;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequest;
+import org.example.expert.domain.todo.dto.response.TodoResponse;
 import org.example.expert.domain.todo.entity.Todo;
+import org.example.expert.domain.user.dto.response.UserResponse;
 import org.example.expert.domain.user.entity.User;
 import org.example.expert.domain.user.enums.UserRole;
 
@@ -33,7 +35,8 @@ public class CommonNeeds {
     public final static String TEST_CONTENTS1 = "Contents";
     public final static String TEST_WEATHER1 = "Weather";
     public final static Todo TEST_TODO1 = new Todo(TEST_TITLE1, TEST_CONTENTS1, TEST_WEATHER1, TEST_USER1);
-
+    public final static UserResponse TEST_USERRESPONSE = new UserResponse(TEST_ID1,TEST_EMAIL1);
+    public final static TodoResponse TEST_TODORESPONSE = new TodoResponse(TEST_ID1,TEST_TITLE1,TEST_CONTENTS1,TEST_WEATHER1,TEST_USERRESPONSE);
     public final static TodoSaveRequest todoSaveRequest = new TodoSaveRequest(TEST_TITLE1, TEST_CONTENTS1);
     //CommentService
     public final static CommentSaveRequest request = new CommentSaveRequest(TEST_CONTENTS1);

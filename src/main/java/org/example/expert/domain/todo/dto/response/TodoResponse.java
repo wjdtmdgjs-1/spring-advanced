@@ -25,4 +25,14 @@ public class TodoResponse {
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
     }
+
+    public TodoResponse(Long testId1, String testTitle1, String testContents1, String testWeather1, UserResponse testUserresponse) {
+        this.id=testId1;
+        this.title=testTitle1;
+        this.contents=testContents1;
+        this.weather=testWeather1;
+        this.user=testUserresponse;
+        this.createdAt=null;
+        this.modifiedAt=null;
+    }
 }

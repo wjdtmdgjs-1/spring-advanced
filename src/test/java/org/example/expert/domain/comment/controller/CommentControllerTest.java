@@ -7,9 +7,7 @@ import org.example.expert.domain.comment.dto.request.CommentSaveRequest;
 import org.example.expert.domain.comment.dto.response.CommentResponse;
 import org.example.expert.domain.comment.dto.response.CommentSaveResponse;
 import org.example.expert.domain.comment.service.CommentService;
-import org.example.expert.domain.common.dto.AuthUser;
 import org.example.expert.domain.user.dto.response.UserResponse;
-import org.example.expert.domain.user.enums.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -24,7 +22,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.example.expert.domain.CommonNeeds.TEST_AUTHUSER;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -37,9 +34,6 @@ class CommentControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private CommentController controller;
-
     @MockBean
     private CommentService commentService;
 
@@ -49,10 +43,9 @@ class CommentControllerTest {
     @Mock
     private AuthUserArgumentResolver resolver;
 
-
     @BeforeEach
     public void setup() {
-        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+        mockMvc = MockMvcBuilders.standaloneSetup(new CommentController(commentService))
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .setCustomArgumentResolvers(resolver)
                 .build();
