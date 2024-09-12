@@ -35,6 +35,7 @@ public class CommonNeeds {
     public final static String TEST_CONTENTS1 = "Contents";
     public final static String TEST_WEATHER1 = "Weather";
     public final static Todo TEST_TODO1 = new Todo(TEST_TITLE1, TEST_CONTENTS1, TEST_WEATHER1, TEST_USER1);
+    public final static Todo TEST_TODO2 = new Todo(TEST_TITLE1, TEST_CONTENTS1, TEST_WEATHER1, TEST_USER1);
     public final static UserResponse TEST_USERRESPONSE = new UserResponse(TEST_ID1,TEST_EMAIL1);
     public final static TodoResponse TEST_TODORESPONSE = new TodoResponse(TEST_ID1,TEST_TITLE1,TEST_CONTENTS1,TEST_WEATHER1,TEST_USERRESPONSE);
     public final static TodoSaveRequest todoSaveRequest = new TodoSaveRequest(TEST_TITLE1, TEST_CONTENTS1);

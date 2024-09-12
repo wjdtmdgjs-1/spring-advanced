@@ -25,7 +25,9 @@ import java.util.Optional;
 import static org.example.expert.domain.CommonNeeds.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ManagerServiceTest {
@@ -181,5 +183,117 @@ class ManagerServiceTest {
         assertEquals(managerUser.getId(), response.getUser().getId());
         assertEquals(managerUser.getEmail(), response.getUser().getEmail());
     }
+
+    @Test
+    public void deleteManager실패_todo없을때() {
+        long todoId =1L;
+        long managerId =1L;
+        Todo todo = TEST_TODO1;
+        AuthUser authUser = TEST_AUTHUSER;
+        given(todoRepository.findById(anyLong())).willReturn(Optional.empty());
+
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class,()->{
+            managerService.deleteManager(authUser,todoId,managerId);
+        });
+
+        assertEquals("Todo not found",exception.getMessage());
+    }
+    @Test
+    public void deleteManager실패_todo에user없을때() {
+        long todoId =1L;
+        long managerId =1L;
+        Todo todo = TEST_TODO1;
+        ReflectionTestUtils.setField(todo,"user",null);
+        AuthUser authUser = TEST_AUTHUSER;
+        given(todoRepository.findById(anyLong())).willReturn(Optional.of(todo));
+
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class,()->{
+            managerService.deleteManager(authUser,todoId,managerId);
+        });
+
+        assertEquals("해당 일정을 만든 유저가 유효하지 않습니다.",exception.getMessage());
+    }
+    @Test
+    public void deleteManager실패_id값들같지않을때() {
+        long todoId =1L;
+        long managerId =1L;
+        Todo todo = TEST_TODO1;
+        AuthUser authUser = TEST_AUTHUSER;
+        ReflectionTestUtils.setField(authUser,"id",2L);
+        given(todoRepository.findById(anyLong())).willReturn(Optional.of(todo));
+
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class,()->{
+            managerService.deleteManager(authUser,todoId,managerId);
+        });
+
+        assertEquals("해당 일정을 만든 유저가 유효하지 않습니다.",exception.getMessage());
+    }
+    @Test
+    public void deleteManager실패_manager찾기실패() {
+        long todoId =1L;
+        long managerId =1L;
+        Todo todo = TEST_TODO1;
+        User user = TEST_USER1;
+        ReflectionTestUtils.setField(user,"id",1L);
+        AuthUser authUser = TEST_AUTHUSER;
+        given(todoRepository.findById(anyLong())).willReturn(Optional.of(todo));
+
+        given(managerRepository.findById(managerId)).willReturn(Optional.empty());
+
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class,()->{
+            managerService.deleteManager(authUser,todoId,managerId);
+        });
+
+        assertEquals("Manager not found",exception.getMessage());
+    }
+    @Test
+    public void deleteManager실패_todogetId_managergetTodoGetId가불일치() {
+        long todoId =1L;
+        long managerId =1L;
+        Todo todo = TEST_TODO1;
+        ReflectionTestUtils.setField(todo,"id",1L);
+
+        Todo todo2 = TEST_TODO2;
+        ReflectionTestUtils.setField(todo2,"id",2L);
+
+        User user = TEST_USER1;
+        ReflectionTestUtils.setField(user,"id",1L);
+
+        AuthUser authUser = TEST_AUTHUSER;
+        given(todoRepository.findById(anyLong())).willReturn(Optional.of(todo));
+
+        Manager manager = new Manager(user,todo2);
+        given(managerRepository.findById(managerId)).willReturn(Optional.of(manager));
+
+
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class,()->{
+            managerService.deleteManager(authUser,todoId,managerId);
+        });
+
+        assertEquals("해당 일정에 등록된 담당자가 아닙니다.",exception.getMessage());
+    }
+    @Test
+    public void deleteManager_정상작동테스트() {
+        long todoId =1L;
+        long managerId =1L;
+        Todo todo = TEST_TODO1;
+        ReflectionTestUtils.setField(todo,"id",1L);
+
+        User user = TEST_USER1;
+        ReflectionTestUtils.setField(user,"id",1L);
+
+        AuthUser authUser = TEST_AUTHUSER;
+        given(todoRepository.findById(anyLong())).willReturn(Optional.of(todo));
+
+        Manager manager = new Manager(user,todo);
+        given(managerRepository.findById(managerId)).willReturn(Optional.of(manager));
+
+        doNothing().when(managerRepository).delete(manager);
+
+        managerService.deleteManager(authUser,todoId,managerId);
+
+        verify(managerRepository,times(1)).delete(manager);
+    }
+
 
 }
