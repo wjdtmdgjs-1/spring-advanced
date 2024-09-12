@@ -42,7 +42,6 @@ public class ManagerController {
             @PathVariable long todoId,
             @PathVariable long managerId
     ) {
-        Long userId = authUser.getId();
-        managerService.deleteManager(userId, todoId, managerId);
+        managerService.deleteManager(authUser, todoId, managerId);
     }
 }

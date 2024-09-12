@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static java.util.Optional.*;
+import static org.example.expert.domain.CommonNeeds.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,7 +32,7 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 public class AuthServiceTest {
 
-    @Spy
+    @Mock
     UserRepository userRepository;
     @Mock
     PasswordEncoder passwordEncoder;
@@ -43,17 +44,9 @@ public class AuthServiceTest {
     @Test
     void 회원가입_정상작동테스트(){
         //given
-        SignupRequest signupRequest = new SignupRequest(
-                "a@a.com","1234","USER");
         String encodedPassword = "1234@";
         given(passwordEncoder.encode(signupRequest.getPassword())).willReturn(encodedPassword);
-
-        UserRole userRole = UserRole.of(signupRequest.getUserRole());
-
-        User savedUser = new User(signupRequest.getEmail(),
-                encodedPassword,
-                userRole);
-
+        User savedUser = TEST_USER1;
         given(userRepository.save(any(User.class))).willReturn(savedUser);
         String bearerToken = "asdqwe";
         given(jwtUtil.createToken(savedUser.getId(), savedUser.getEmail(), savedUser.getUserRole()))
@@ -67,8 +60,6 @@ public class AuthServiceTest {
     @Test
     void 회원가입실패_이미존재하는이메일(){
         //given
-        SignupRequest signupRequest = new SignupRequest(
-                "a@a.com","1234","USER");
         given(userRepository.existsByEmail(signupRequest.getEmail())).willReturn(true);
         //when
         InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> {
@@ -81,10 +72,7 @@ public class AuthServiceTest {
     @Test
     void 로그인_정상작동테스트(){
         //given
-        SigninRequest signinRequest = new SigninRequest(
-                "a@a.com","1234");
-        User user = new User("a@a.com","1234",UserRole.USER);
-
+        User user = TEST_USER1;
         given(userRepository.findByEmail(signinRequest.getEmail())).willReturn(Optional.of(user));
         given(passwordEncoder.matches(signinRequest.getPassword(),user.getPassword())).willReturn(true);
 
@@ -99,10 +87,7 @@ public class AuthServiceTest {
 
     @Test
     void 로그인실패_가입되지않은유저(){
-        SigninRequest signinRequest = new SigninRequest(
-                "a@a.com","1234");
         given(userRepository.findByEmail(signinRequest.getEmail())).willReturn(Optional.empty());
-
         InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->{
             authService.signin(signinRequest);
         });
@@ -112,9 +97,7 @@ public class AuthServiceTest {
 
     @Test
     void 로그인실패_잘못된비밀번호(){
-        SigninRequest signinRequest = new SigninRequest(
-                "a@a.com","1234");
-        User user = new User("a@a.com","1234",UserRole.USER);
+        User user = TEST_USER1;
 
         given(userRepository.findByEmail(signinRequest.getEmail())).willReturn(Optional.of(user));
         given(passwordEncoder.matches(signinRequest.getPassword(),user.getPassword())).willReturn(false);
