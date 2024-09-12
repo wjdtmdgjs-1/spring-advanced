@@ -36,7 +36,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = TodoController.class)
-@ExtendWith(MockitoExtension.class)
 public class TodoControllerTest {
     @Autowired
     private MockMvc mockMvc;
