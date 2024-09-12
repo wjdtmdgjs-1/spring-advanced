@@ -23,6 +23,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.List;
 import java.util.Optional;
 
+import static org.example.expert.domain.CommonNeeds.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -40,7 +41,7 @@ class ManagerServiceTest {
     private ManagerService managerService;
 
     @Test
-    public void manager_목록_조회_시_Todo가_없다면_IRE_에러를_던진다() {
+    public void saveManager실패_todo못찾음() {
         // given
         long todoId = 1L;
         given(todoRepository.findById(todoId)).willReturn(Optional.empty());
@@ -70,6 +71,64 @@ class ManagerServiceTest {
         );
 
         assertEquals("담당자를 등록하려고 하는 유저가 일정을 만든 유저가 유효하지 않습니다.", exception.getMessage());
+    }
+
+    @Test
+    void saveManager실패_ManagerUser없을때(){
+        Long todoId =1L;
+        AuthUser authUser = TEST_AUTHUSER;
+
+        Todo todo = TEST_TODO1;
+        User user1 = TEST_USER1;
+        ReflectionTestUtils.setField(user1, "id", 1L) ;
+
+        given(todoRepository.findById(todoId)).willReturn(Optional.of(todo));
+        Long managerUserId =2L;
+        ManagerSaveRequest managerSaveRequest = new ManagerSaveRequest(managerUserId);
+
+        given(userRepository.findById(managerUserId)).willReturn(Optional.empty());
+        //when
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class,()->{
+            managerService.saveManager(authUser,todoId,managerSaveRequest);
+        });
+        //then
+        assertEquals("등록하려고 하는 담당자 유저가 존재하지 않습니다.",exception.getMessage());
+    }
+
+    @Test
+    void saveManager_정상작동테스트(){
+        Long todoId =1L;
+        AuthUser authUser = TEST_AUTHUSER;
+
+        Todo todo = TEST_TODO1;
+        User user1 = TEST_USER1;
+        ReflectionTestUtils.setField(user1, "id", 1L) ;
+        given(todoRepository.findById(todoId)).willReturn(Optional.of(todo));
+
+        Long managerUserId =2L;
+        ManagerSaveRequest managerSaveRequest = new ManagerSaveRequest(managerUserId);
+
+        User managerUser = TEST_USER2;
+        ReflectionTestUtils.setField(managerUser, "id", 2L) ;
+        given(userRepository.findById(managerUserId)).willReturn(Optional.of(managerUser));
+        Manager savedManagerUser = new Manager(managerUser,todo);
+        given(managerRepository.save(any(Manager.class))).willReturn(savedManagerUser);
+        //when
+        ManagerSaveResponse response = managerService.saveManager(authUser,todoId,managerSaveRequest);
+        //then
+        assertNotNull(response);
+
+    }
+
+    @Test
+    public void manager_목록_조회_시_Todo가_없다면_IRE_에러를_던진다() {
+        // given
+        long todoId = 1L;
+        given(todoRepository.findById(todoId)).willReturn(Optional.empty());
+
+        // when & then
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> managerService.getManagers(todoId));
+        assertEquals("Todo not found", exception.getMessage());
     }
 
     @Test // 테스트코드 샘플
